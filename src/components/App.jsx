@@ -49,7 +49,7 @@ export const App = () => {
     setContacts(savedContacts);
   }, []);
 
-  const visibleContactList = getVisibleContacts();
+  // const visibleContactList = getVisibleContacts();
 
   return (
     <div className={css.container}>
@@ -58,7 +58,7 @@ export const App = () => {
 
       <h2>Contacts</h2>
       <Filter filter={filter} handleChangeFilter={handleChangeFilter} />
-      <ContactList contactList={visibleContactList} deleteContact={deleteContact} />
+      <ContactList contactList={getVisibleContacts()} deleteContact={deleteContact} />
     </div>
   );
 };
