@@ -3,43 +3,54 @@ import { nanoid } from 'nanoid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
-import css from './App.module.css'
-
+import css from './App.module.css';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(JSON.parse(localStorage.getItem('contacts') ?? []));
+  const [contacts, setContacts] = useState([]);
   const [filter, setFilter] = useState('');
- 
 
-  const addContact = ({ dataUser }) => {
-    const { name, number } = dataUser;
-    const newContact = { name, number, id: nanoid(), };
+  const addContact = ({ name, number }) => {
+    const newContact = {
+      name,
+      number,
+      id: nanoid(),
+    };
 
-    contacts.find(contact => contact.name === newContact.name) ?
-      alert(`${newContact.name} is already in your contacts.`) : setContacts(prevState => ({
-        contacts: [...prevState.contacts, newContact],
-      }));
+    if (contacts.some((contact) => contact.name === newContact.name)) {
+      alert(`${newContact.name} is already in your contacts.`);
+    } else {
+      setContacts((prevContacts) => {
+        const updatedContacts = [...prevContacts, newContact];
+        localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+        return updatedContacts;
+      });
+    }
   };
 
-  const deleteContact = id => {
-    setContacts({ contacts: contacts.filter(contact => contact.id !== id) });
-  }
+  const deleteContact = (id) => {
+    setContacts((prevContacts) => {
+      const updatedContacts = prevContacts.filter((contact) => contact.id !== id);
+      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
+      return updatedContacts;
+    });
+  };
 
-  const handleChangeFilter = e => {
-    setFilter({ filter: e.target.value });
-  }
+  const handleChangeFilter = (e) => {
+    setFilter(e.target.value);
+  };
 
   const getVisibleContacts = () => {
     const normalizedFilter = filter.toLowerCase();
-    return contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter));
-  }
-
-  
+    return contacts.filter((contact) => contact.name.toLowerCase().includes(normalizedFilter));
+  };
 
   useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-  
+    const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+    setContacts(savedContacts);
+  }, []);
+
+  const visibleContactList = getVisibleContacts();
+
   return (
     <div className={css.container}>
       <h1>Phonebook</h1>
@@ -47,8 +58,9 @@ export const App = () => {
 
       <h2>Contacts</h2>
       <Filter filter={filter} handleChangeFilter={handleChangeFilter} />
-      <ContactList contactList={getVisibleContacts} deleteContact={deleteContact} />
+      <ContactList contactList={visibleContactList} deleteContact={deleteContact} />
     </div>
-  )
-}
+  );
+};
 
+export default App;
