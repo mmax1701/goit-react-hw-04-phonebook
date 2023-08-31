@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
@@ -6,7 +6,10 @@ import { Filter } from './Filter/Filter';
 import css from './App.module.css';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+    const [contacts, setContacts] = useState(() => {
+    const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+    return savedContacts;
+  });
   const [filter, setFilter] = useState('');
 
   const addContact = ({ name, number }) => {
@@ -43,13 +46,6 @@ export const App = () => {
     const normalizedFilter = filter.toLowerCase();
     return contacts.filter((contact) => contact.name.toLowerCase().includes(normalizedFilter));
   };
-
-  useEffect(() => {
-    const savedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-    setContacts(savedContacts);
-  }, []);
-
-  // const visibleContactList = getVisibleContacts();
 
   return (
     <div className={css.container}>
