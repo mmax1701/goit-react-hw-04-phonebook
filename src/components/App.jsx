@@ -26,20 +26,12 @@ export const App = () => {
     if (contacts.some((contact) => contact.name === newContact.name)) {
       alert(`${newContact.name} is already in your contacts.`);
     } else {
-      setContacts((prevContacts) => {
-        const updatedContacts = [...prevContacts, newContact];
-        localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-        return updatedContacts;
-      });
+      setContacts((prevContacts) => [...prevContacts, newContact]);
     }
   };
 
   const deleteContact = (id) => {
-    setContacts((prevContacts) => {
-      const updatedContacts = prevContacts.filter((contact) => contact.id !== id);
-      localStorage.setItem('contacts', JSON.stringify(updatedContacts));
-      return updatedContacts;
-    });
+    setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== id));
   };
 
   const handleChangeFilter = (e) => {
